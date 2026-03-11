@@ -19,7 +19,7 @@ jobs:
   build:
     name: Build
     # フォーク元のPRではなく、同じリポジトリからのPRのみ実行（セキュリティ対策）
-    if: $ github.event.pull_request.head.repo.full_name == github.repository
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
       # リポジトリのコードをチェックアウト（ダウンロード）する

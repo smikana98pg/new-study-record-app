@@ -53,15 +53,15 @@ jobs:
       # デプロイ用にビルドし直す（各ジョブは別々の仮想マシンなので、buildジョブの成果物は残っていない）
       - run: npm ci && npm run build
         env:
-          VITE_SUPABASE_URL: ${{  secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{  secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
       # Firebase Hostingにデプロイ
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           # GitHubが自動で発行するトークン（リポジトリへのアクセス権限）
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           # firebase init hosting:github で自動作成されたサービスアカウントの認証情報
-          firebaseServiceAccount: ${{  secrets.FIREBASE_SERVICE_ACCOUNT_NEW_STUDY_RECORD_APP_9F479 }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_NEW_STUDY_RECORD_APP_9F479 }}
           # live = 本番サイトにデプロイ（プレビューではなく）
           channelId: live
           # デプロイ先のFirebaseプロジェクトID

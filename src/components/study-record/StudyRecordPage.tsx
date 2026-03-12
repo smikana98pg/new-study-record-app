@@ -27,10 +27,10 @@ export const StudyRecordPage = () => {
     setOpen(true);
   };
 
-  const onAdd = () => {
+  //const onAdd = () => {
         // DBに登録 & uuidを取得
         //const insertedRecord = await insertStudyRecord(title, time);
-  }
+  //}
 
   // データ取得中の場合
   if (isLoading) {

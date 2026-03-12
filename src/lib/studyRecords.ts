@@ -19,20 +19,20 @@ export async function getAllStudyRecords(): Promise<StudyRecord[]> {
   return studyRecords;
 }
 
-export async function insertStudyRecord(
-  title: string,
-  time: number,
-): Promise<StudyRecord[]> {
-  const { data, error } = await supabase
-    .from("study-record")
-    .insert([{ title, time }])
-    .select()
-    .single();
+// export async function insertStudyRecord(
+//   title: string,
+//   time: number,
+// ): Promise<StudyRecord[]> {
+//   const { data, error } = await supabase
+//     .from("study-record")
+//     .insert([{ title, time }])
+//     .select()
+//     .single();
 
-  if (error) throw error;
-  return data;
-}
+//   if (error) throw error;
+//   return data;
+// }
 
-export const deleteStudies = async (id: string) => {
-  await supabase.from("study-record").delete().eq("id", id);
-};
+// export const deleteStudies = async (id: string) => {
+//   await supabase.from("study-record").delete().eq("id", id);
+// };

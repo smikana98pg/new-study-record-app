@@ -1,11 +1,7 @@
+import { StudyRecordPage } from "./components/study-record/StudyRecordPage";
+
 function App() {
-  return (
-    <>
-      <h1>Hello World</h1>
-      <p>こんにちは世界</p>
-      <p>さようなら世界</p>
-    </>
-  );
+  return <StudyRecordPage />;
 }
 
 export default App;

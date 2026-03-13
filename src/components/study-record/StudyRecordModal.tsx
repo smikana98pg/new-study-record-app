@@ -77,7 +77,7 @@ export const StudyRecordModal: React.FC<Props> = memo((props) => {
         <Dialog.Positioner>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>学習記録</DialogTitle>
+              <DialogTitle data-testid="modal-title">新規登録</DialogTitle>
             </DialogHeader>
 
             <DialogBody>
@@ -86,6 +86,7 @@ export const StudyRecordModal: React.FC<Props> = memo((props) => {
                   <Field.Root>
                     <Field.Label>学習内容</Field.Label>
                     <Input
+                      type="text"
                       {...register("studyTitle", {
                         required: "学習内容の入力は必須です",
                       })}

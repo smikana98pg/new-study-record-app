@@ -55,7 +55,7 @@ export const StudyRecordPage = () => {
 
   // データ取得中の場合
   if (isLoading) {
-    return <Spinner />;
+    return <Spinner data-testid="loading" />;
   }
   return (
     <>

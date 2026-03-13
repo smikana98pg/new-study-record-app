@@ -1,6 +1,7 @@
 import { StudyRecord } from "../domain/studyRecord";
 import { supabase } from "../../utils/supabase";
 
+//データ取得関数
 export async function getAllStudyRecords(): Promise<StudyRecord[]> {
   const response = await supabase.from("study-record").select("*");
 
@@ -19,20 +20,21 @@ export async function getAllStudyRecords(): Promise<StudyRecord[]> {
   return studyRecords;
 }
 
-// export async function insertStudyRecord(
-//   title: string,
-//   time: number,
-// ): Promise<StudyRecord[]> {
-//   const { data, error } = await supabase
-//     .from("study-record")
-//     .insert([{ title, time }])
-//     .select()
-//     .single();
+//データ登録関数
+export async function insertStudyRecord(
+  title: string,
+  time: number,
+): Promise<void> {
+  const { error } = await supabase
+    .from("study-record")
+    .insert([{ title, time }]);
 
-//   if (error) throw error;
-//   return data;
-// }
+  if (error) throw error;
+}
 
-// export const deleteStudies = async (id: string) => {
-//   await supabase.from("study-record").delete().eq("id", id);
-// };
+//データ削除関数
+export async function deleteStudyRecord(id: string): Promise<void> {
+  const { error } = await supabase.from("study-record").delete().eq("id", id);
+
+  if (error) throw error;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Flex, Box, Spinner } from "@chakra-ui/react";
 import type { StudyRecord } from "@/domain/studyRecord";
-import { getAllStudyRecords, insertStudyRecord } from "@/lib/studyRecords";
+import { getAllStudyRecords } from "@/lib/studyRecords";
 import { PageHeader } from "../PageHeader";
 import { PrimaryButton } from "../ui/PrimaryButton";
 import { StudyRecordTable } from "./StudyRecordTable";
@@ -13,24 +13,45 @@ export const StudyRecordPage = () => {
   const [open, setOpen] = useState(false); // モーダル表示用ステート
 
   // DBからデータ取得処理
+  const fetchStudyRecords = async () => {
+    const studyRecords = await getAllStudyRecords();
+    setStudyRecords(studyRecords);
+    setIsLoading(false);
+  };
+
+  // 初回のみデータ取得
   useEffect(() => {
-    const fetchStudyRecords = async () => {
+    let ignore = false;
+
+    const fetch = async () => {
       const studyRecords = await getAllStudyRecords();
-      setStudyRecords(studyRecords);
-      setIsLoading(false);
+      if (!ignore) {
+        setStudyRecords(studyRecords);
+        setIsLoading(false);
+      }
     };
-    fetchStudyRecords();
+    fetch();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
-  // 新規登録処理
-  const onclickAdd = () => {
+  // 新規登録ボタン押下時
+  const onClickAdd = () => {
     setOpen(true);
   };
 
-  //const onAdd = () => {
-        // DBに登録 & uuidを取得
-        //const insertedRecord = await insertStudyRecord(title, time);
-  //}
+  // 登録後のコールバック
+  const onModalAddClicked = () => {
+    setOpen(false);
+    fetchStudyRecords(); // 登録後に再取得
+  };
+
+  // 削除後のコールバック
+  const onDeleteClicked = () => {
+    fetchStudyRecords(); // 削除後に再取得
+  };
 
   // データ取得中の場合
   if (isLoading) {
@@ -45,14 +66,21 @@ export const StudyRecordPage = () => {
 
           {/* 新規登録ボタン表示 */}
           <Flex justify="flex-end" my={4}>
-            <PrimaryButton onClick={onclickAdd}>新規登録</PrimaryButton>
+            <PrimaryButton onClick={onClickAdd}>新規登録</PrimaryButton>
           </Flex>
 
           {/* 一覧表示 */}
-          <StudyRecordTable studyRecords={studyRecords} />
+          <StudyRecordTable
+            studyRecords={studyRecords}
+            onDeleteClicked={onDeleteClicked}
+          />
         </Box>
       </Flex>
-      <StudyRecordModal open={open} setOpen={setOpen} />
+      <StudyRecordModal
+        open={open}
+        setOpen={setOpen}
+        onModalAddClicked={onModalAddClicked}
+      />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -14,14 +14,16 @@ import {
   Input,
   Portal,
 } from "@chakra-ui/react";
-import { insertStudyRecord } from "@/lib/studyRecords";
+import { insertStudyRecord, updateStudyRecord } from "@/lib/studyRecords";
 import { useForm } from "react-hook-form";
+import type { StudyRecord } from "@/domain/studyRecord";
 
 // プロップスの型定義
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onModalAddClicked: () => void;
+  onModalSubmitted: () => void;
+  editRecord: StudyRecord | null; // nullなら新規、あれば編集
 };
 
 // フォームの型定義
@@ -31,7 +33,7 @@ type FormData = {
 };
 
 export const StudyRecordModal: React.FC<Props> = memo((props) => {
-  const { open, setOpen, onModalAddClicked } = props;
+  const { open, setOpen, onModalSubmitted, editRecord } = props;
   const [isLoading, setIsLoading] = useState(false);
   const {
     register, // 入力フィールドを登録する関数
@@ -45,14 +47,36 @@ export const StudyRecordModal: React.FC<Props> = memo((props) => {
     },
   });
 
-  //登録ボタン押下時
-  const onClickAdd = async (data: FormData) => {
+  // editRecordが変わったらフォームに値をセット
+  useEffect(() => {
+    if (editRecord) {
+      // 編集モード：既存のデータをフォームにセット
+      reset({
+        studyTitle: editRecord.title,
+        studyTime: editRecord.time,
+      });
+    } else {
+      // 新規モード：空にリセット
+      reset({
+        studyTitle: "",
+        studyTime: 0,
+      });
+    }
+  }, [editRecord, reset]);
+
+  // 登録処理（新規 or 更新を分岐）
+  const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // DBに登録
-      await insertStudyRecord(data.studyTitle, data.studyTime);
-      //登録ボタン押下後のコールバック関数
-      onModalAddClicked();
+      if (editRecord) {
+        // DB更新
+        await updateStudyRecord(editRecord.id, data.studyTitle, data.studyTime);
+      } else {
+        // DB登録
+        await insertStudyRecord(data.studyTitle, data.studyTime);
+        //登録ボタン押下後のコールバック関数
+      }
+      onModalSubmitted();
       reset();
     } catch (error) {
       console.error(error);
@@ -77,7 +101,9 @@ export const StudyRecordModal: React.FC<Props> = memo((props) => {
         <Dialog.Positioner>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle data-testid="modal-title">新規登録</DialogTitle>
+              <DialogTitle data-testid="modal-title">
+                {editRecord ? "記録編集" : "新規登録"}
+              </DialogTitle>
             </DialogHeader>
 
             <DialogBody>
@@ -122,11 +148,11 @@ export const StudyRecordModal: React.FC<Props> = memo((props) => {
 
                 <Button
                   alignSelf="flex-start"
-                  onClick={handleSubmit(onClickAdd)}
+                  onClick={handleSubmit(onSubmit)}
                   loading={isLoading}
-                  loadingText="登録中..."
+                  loadingText={editRecord ? "更新中..." : "登録中..."}
                 >
-                  登録
+                  {editRecord ? "保存" : "登録"}
                 </Button>
               </Fieldset.Root>
             </DialogBody>

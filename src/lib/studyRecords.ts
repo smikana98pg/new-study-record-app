@@ -38,3 +38,16 @@ export async function deleteStudyRecord(id: string): Promise<void> {
 
   if (error) throw error;
 }
+
+//データ更新関数
+export async function updateStudyRecord(
+  id: string,
+  title: string,
+  time: number,
+): Promise<void> {
+  const { error } = await supabase
+    .from("study-record")
+    .update({ title: title, time: time })
+    .eq("id", id);
+  if (error) throw error;
+}

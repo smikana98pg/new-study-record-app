@@ -11,6 +11,7 @@ export const StudyRecordPage = () => {
   const [studyRecords, setStudyRecords] = useState<StudyRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false); // モーダル表示用ステート
+  const [editRecord, setEditRecord] = useState<StudyRecord | null>(null); // モーダル表示用
 
   // DBからデータ取得処理
   const fetchStudyRecords = async () => {
@@ -39,11 +40,18 @@ export const StudyRecordPage = () => {
 
   // 新規登録ボタン押下時
   const onClickAdd = () => {
+    setEditRecord(null);
+    setOpen(true);
+  };
+
+  // 編集ボタン押下時
+  const onClickEdit = (record: StudyRecord) => {
+    setEditRecord(record); // 編集対象のデータをセット
     setOpen(true);
   };
 
   // 登録後のコールバック
-  const onModalAddClicked = () => {
+  const onModalSubmitted = () => {
     setOpen(false);
     fetchStudyRecords(); // 登録後に再取得
   };
@@ -73,13 +81,15 @@ export const StudyRecordPage = () => {
           <StudyRecordTable
             studyRecords={studyRecords}
             onDeleteClicked={onDeleteClicked}
+            onClickEdit={onClickEdit}
           />
         </Box>
       </Flex>
       <StudyRecordModal
         open={open}
         setOpen={setOpen}
-        onModalAddClicked={onModalAddClicked}
+        onModalSubmitted={onModalSubmitted}
+        editRecord={editRecord}
       />
     </>
   );

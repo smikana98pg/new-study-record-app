@@ -7,10 +7,11 @@ import { deleteStudyRecord } from "@/lib/studyRecords";
 type Props = {
   studyRecords: StudyRecord[];
   onDeleteClicked: () => void;
+  onClickEdit: (record: StudyRecord) => void;
 };
 
 export const StudyRecordTable = memo(
-  ({ studyRecords, onDeleteClicked }: Props) => {
+  ({ studyRecords, onDeleteClicked, onClickEdit }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     //削除ボタン押下時
     const onClickDelete = async (id: string) => {
@@ -43,7 +44,12 @@ export const StudyRecordTable = memo(
                 <Table.Cell>{studyRecord.title}</Table.Cell>
                 <Table.Cell>{studyRecord.time}</Table.Cell>
                 <Table.Cell textAlign="end">
-                  <IconButton aria-label="編集" colorPalette="teal" size="sm">
+                  <IconButton
+                    aria-label="編集"
+                    colorPalette="teal"
+                    size="sm"
+                    onClick={() => onClickEdit(studyRecord)}
+                  >
                     <FiEdit />
                   </IconButton>
                   <IconButton

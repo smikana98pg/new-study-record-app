@@ -16,6 +16,7 @@ const mockGetAllStudyRecords = jest
   ]);
 const mockInsertStudyRecord = jest.fn().mockResolvedValue(undefined);
 const mockDeleteStudyRecord = jest.fn().mockResolvedValue(undefined);
+const mockUpdateStudyRecord = jest.fn().mockResolvedValue(undefined);
 
 // 本物の関数をモック関数に差し替える
 jest.mock("../lib/studyRecords", () => {
@@ -23,6 +24,7 @@ jest.mock("../lib/studyRecords", () => {
     getAllStudyRecords: () => mockGetAllStudyRecords(),
     insertStudyRecord: (...args: unknown[]) => mockInsertStudyRecord(...args),
     deleteStudyRecord: (...args: unknown[]) => mockDeleteStudyRecord(...args),
+    updateStudyRecord: (...args: unknown[]) => mockUpdateStudyRecord(...args),
   };
 });
 
@@ -184,6 +186,55 @@ describe("App", () => {
     // deleteStudyRecordが呼ばれたことを確認
     await waitFor(() => {
       expect(mockDeleteStudyRecord).toHaveBeenCalledWith("1");
+    });
+  });
+
+  // ========== 更新テスト ==========
+  test("モーダルのタイトルが記録編集である", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await waitForTableToLoad();
+
+    // 1つ目の行の編集ボタンをクリック
+    const editButtons = screen.getAllByLabelText("編集");
+    await user.click(editButtons[0]);
+
+    // モーダルのタイトルが「記録編集」であることを確認
+    await waitFor(() => {
+      expect(screen.getByTestId("modal-title")).toHaveTextContent("記録編集");
+    });
+  });
+
+  test("編集して登録すると更新される", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await waitForTableToLoad();
+
+    // 1つ目の行の編集ボタンをクリック
+    const editButtons = screen.getAllByLabelText("編集");
+    await user.click(editButtons[0]);
+
+    // モーダルが表示されるまで待つ
+    await waitFor(() => {
+      expect(screen.getByTestId("modal-title")).toBeInTheDocument();
+    });
+
+    // 学習内容を変更
+    const titleInput = screen.getByRole("textbox");
+    await user.clear(titleInput);
+    await user.type(titleInput, "React勉強");
+
+    // 学習時間を変更
+    const timeInput = screen.getByRole("spinbutton");
+    await user.clear(timeInput);
+    await user.type(timeInput, "5");
+
+    // 保存ボタンをクリック
+    await user.click(screen.getByText("保存"));
+
+    // updateStudyRecordが正しい引数で呼ばれたことを確認
+    await waitFor(() => {
+      expect(mockUpdateStudyRecord).toHaveBeenCalledWith("1", "React勉強", 5);
     });
   });
 });

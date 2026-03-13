@@ -20,5 +20,6 @@ export default {
   moduleNameMapper: {
     // CSSファイルのimportをモック（代替）する。JestはCSSを解釈できないため、ダミーに置き換える
     "\\.(css|less)$": "identity-obj-proxy",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 };

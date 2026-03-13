@@ -6,6 +6,7 @@ export default {
   // テスト実行前に読み込むセットアップファイルを指定
   setupFilesAfterEnv: ["./jest.setup.ts"],
   // テスト対象のファイルパターンを指定。__tests__フォルダ内の.spec.ts/.spec.tsxのみ対象にする
+  testMatch: ["**/__tests__/**/*.spec.(ts|tsx)"],
   transform: {
     // .ts/.tsxファイルをts-jestで変換する
     // デフォルトではtsconfig.jsonが読み込まれるが、Viteプロジェクトではモジュール方式の違いでエラーが出るため
@@ -14,11 +15,13 @@ export default {
       "ts-jest",
       {
         tsconfig: "tsconfig.jest.json",
+        diagnostics: false,
       },
     ],
   },
   moduleNameMapper: {
     // CSSファイルのimportをモック（代替）する。JestはCSSを解釈できないため、ダミーに置き換える
     "\\.(css|less)$": "identity-obj-proxy",
+    "^@/(.*)$": "<rootDir>/src/$1",
   },
 };
